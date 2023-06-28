@@ -1,0 +1,73 @@
+plugins {
+	id 'fabric-loom' version '1.2-SNAPSHOT'
+	id 'io.github.juuxel.loom-quiltflower' version '1.10.0'
+	id 'maven-publish'
+}
+
+version = project.mod_version
+group = project.maven_group
+base.archivesName = project.archives_base_name
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	minecraft("com.mojang:minecraft:$minecraft_version")
+	mappings("net.fabricmc:yarn:$yarn_mappings:v2")
+	modImplementation("net.fabricmc:fabric-loader:$loader_version")
+
+	include(modImplementation(fabricApi.module("fabric-api-base", fabric_version)))
+    include(implementation("io.determann:shadow-api-17:$shadow_version"))
+	include(implementation("net.fabricmc:javapoet:$javapoet_version"))
+
+	testAnnotationProcessor("io.determann:shadow-api-17:$shadow_version")
+	testAnnotationProcessor("net.fabricmc:javapoet:$javapoet_version")
+	testAnnotationProcessor(sourceSets.main.output)
+}
+
+loom {
+	splitEnvironmentSourceSets()
+
+	mods {
+		"configloader" {
+			sourceSet sourceSets.main
+			sourceSet sourceSets.client
+		}
+	}
+}
+processResources {
+	inputs.property "version", project.version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": project.version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release.set(17)
+}
+
+java {
+	withSourcesJar()
+
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
+}
+
+jar {
+	from("LICENSE") {
+		rename { "${it}_${project.archives_base_name}"}
+	}
+}
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+		}
+	}
+
+	repositories {
+	}
+}

@@ -1,0 +1,33 @@
+{
+	"schemaVersion": 1,
+	"id": "config_toolkit",
+	"version": "${version}",
+	"name": "ConfigToolkit",
+	"description": "A library for loading json config files with some additional tools for handling them.",
+	"authors": [
+		"MattiDragon"
+	],
+	"contact": {
+		"homepage": "https://github.com/mattidragon/ConfigToolkit",
+		"sources": "https://github.com/mattidragon/ConfigToolkit"
+	},
+	"license": "MIT",
+	"icon": "assets/configtoolkit/icon.png",
+	"environment": "*",
+	"entrypoints": {
+	},
+	"mixins": [
+		"configtoolkit.mixins.json"
+	],
+	"custom": {
+		"modmenu": {
+			"badges": ["library"]
+		}
+	},
+	"depends": {
+		"fabricloader": ">=0.14.21",
+		"minecraft": ">=1.20-rc.1",
+		"java": ">=17",
+		"fabric-api-base": "*"
+	}
+}
