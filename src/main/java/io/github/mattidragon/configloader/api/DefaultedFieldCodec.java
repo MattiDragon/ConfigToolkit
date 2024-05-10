@@ -1,74 +1,33 @@
 package io.github.mattidragon.configloader.api;
 
-import com.mojang.serialization.*;
-import com.mojang.serialization.codecs.FieldEncoder;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 
+import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 /**
- * A codec for creating fields that have default values. Unlike other methods of using default values,
- * this one only uses the default for missing fields, and not when deserialization fails.
- * Besides the default value this class works exactly like {@link Codec#fieldOf(String)}.
- * @param <A> The type that this codec serializes.
+ * @deprecated The DFU {@link Codec#optionalFieldOf(String, Object)} method no longer fails silently as of minecraft 1.20.5. 
+ * Please use those. The current factory methods are retained for backwards compatibility.
  */
-public class DefaultedFieldCodec<A> extends MapCodec<A> {
-    private final Codec<A> codec;
-    private final String name;
-    private final Supplier<A> defaultSupplier;
-    private final MapEncoder<A> encoder;
-
-    private DefaultedFieldCodec(Codec<A> codec, String name, Supplier<A> defaultSupplier) {
-        this.codec = codec;
-        this.name = name;
-        this.defaultSupplier = defaultSupplier;
-        this.encoder = new FieldEncoder<>(name, codec);
+@Deprecated
+public class DefaultedFieldCodec {
+    private DefaultedFieldCodec() {
     }
 
+    /**
+     * @deprecated Use the DFU equivalent
+     */
+    @Deprecated
     public static <A> MapCodec<A> of(Codec<A> codec, String name, Supplier<A> defaultSupplier) {
-        return new DefaultedFieldCodec<>(codec, name, defaultSupplier);
+        return codec.optionalFieldOf(name).xmap(optional -> optional.orElseGet(defaultSupplier), Optional::of);
     }
 
+    /**
+     * @deprecated Use the DFU equivalent
+     */
+    @Deprecated
     public static <A> MapCodec<A> of(Codec<A> codec, String name, A defaultValue) {
-        return new DefaultedFieldCodec<>(codec, name, () -> defaultValue);
-    }
-
-    @Override
-    public <T> Stream<T> keys(DynamicOps<T> ops) {
-        return Stream.of(ops.createString(name));
-    }
-
-    @Override
-    public <T> DataResult<A> decode(DynamicOps<T> ops, MapLike<T> input) {
-        var value = input.get(name);
-        if (value == null) {
-            return DataResult.success(defaultSupplier.get());
-        }
-        return codec.parse(ops, value);
-    }
-
-    @Override
-    public <T> RecordBuilder<T> encode(A input, DynamicOps<T> ops, RecordBuilder<T> prefix) {
-        return encoder.encode(input, ops, prefix);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        var that = (DefaultedFieldCodec<?>) o;
-
-        if (!codec.equals(that.codec)) return false;
-        if (!name.equals(that.name)) return false;
-        return defaultSupplier.equals(that.defaultSupplier);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = codec.hashCode();
-        result = 31 * result + name.hashCode();
-        result = 31 * result + defaultSupplier.hashCode();
-        return result;
+        return codec.optionalFieldOf(name, defaultValue);
     }
 }

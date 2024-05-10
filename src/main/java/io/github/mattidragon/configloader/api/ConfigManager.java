@@ -48,7 +48,6 @@ public interface ConfigManager<D> {
      * Forces the config to reload from file.
      * @return A runtime exceptions that might have occurred during loading. It's recommended to handle these gracefully and report errors back to the user.
      */
-    @SuppressWarnings("UnstableApiUsage")
     @CheckReturnValue
     Optional<RuntimeException> reload();
 

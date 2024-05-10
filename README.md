@@ -31,6 +31,12 @@ Create one using the `ConfigManager.create()` method. Pass in a codec, default v
 It's recommended to call `get` on it once during the mod initializer to make sure the config loads during startup.
 
 ### DefaultingFieldCodec
+This feature is only needed on minecraft versions before 1.20.6.
+After that the normal way of creating an optional field has the same behaviour.
+
+<details>
+<summary>Old description</summary>
+
 `DefaultingFieldCodec` provides a codec similar to `Codec#fieldOf`, but offers one main advantage:
 It has a default value for when the option is missing from the config. 
 This allows you to safely add values to your config without users having to worry about updating their config.
@@ -39,6 +45,8 @@ While there are other ways to have default values when using codecs,
 this is the only way to do so without also having a default in the case of invalid values.
 This is important because you don't want your users getting their settings overridden, even if they are invalid.
 It's better to show an error and let them fix it.
+
+</details>
 
 ### GenerateMutable
 The `GenerateMutable` annotation is a really useful tool when using records to hold config options. 

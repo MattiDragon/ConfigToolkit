@@ -16,7 +16,6 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.Optional;
 
 public class ConfigManagerImpl<D> implements ConfigManager<D> {
@@ -115,7 +114,7 @@ public class ConfigManagerImpl<D> implements ConfigManager<D> {
     }
 
     private void write(JsonElement data) {
-        try (var out = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+        try (var out = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
             GSON.toJson(data, out);
         } catch (IOException e) {
             throw new UncheckedIOException("Failed to save power networks config", e);
@@ -128,7 +127,7 @@ public class ConfigManagerImpl<D> implements ConfigManager<D> {
             var result = codec.parse(JsonOps.INSTANCE, json);
 
             value = result.mapError(error -> "Failed to load config %s: %s. Delete the file or invalid values to regenerate defaults.".formatted(id, error))
-                    .getOrThrow(false, LOGGER::error);
+                    .getOrThrow();
 
             onChange.invoker().onChange(value);
 

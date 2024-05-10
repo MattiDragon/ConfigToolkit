@@ -4,14 +4,13 @@ import com.squareup.javapoet.*;
 import io.determann.shadow.api.ShadowApi;
 import io.determann.shadow.api.ShadowProcessor;
 import io.determann.shadow.api.TypeKind;
+import io.determann.shadow.api.annotationvalue.AnnotationValue;
 import io.determann.shadow.api.shadow.Declared;
 import io.determann.shadow.api.shadow.Record;
 import io.determann.shadow.api.shadow.RecordComponent;
 import io.determann.shadow.api.shadow.Shadow;
-import io.determann.shadow.api.wrapper.AnnotationValueTypeChooser;
 
 import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
@@ -24,9 +23,13 @@ import java.io.UncheckedIOException;
 import static io.determann.shadow.api.ShadowApi.convert;
 
 @SupportedAnnotationTypes(ConfigLoaderAnnotationProcessor.GENERATE_MUTABLE_ANNOTATION)
-@SupportedSourceVersion(SourceVersion.RELEASE_17)
 public class ConfigLoaderAnnotationProcessor extends ShadowProcessor {
     public static final String GENERATE_MUTABLE_ANNOTATION = "io.github.mattidragon.configloader.api.GenerateMutable";
+
+    @Override
+    public SourceVersion getSupportedSourceVersion() {
+        return SourceVersion.latestSupported();
+    }
 
     @Override
     public void process(ShadowApi api) {
@@ -150,7 +153,7 @@ public class ConfigLoaderAnnotationProcessor extends ShadowProcessor {
     private static String getGetterName(RecordComponent component) {
         var fancy = component.getRecord().getDirectUsageOf(component.getApi().getAnnotationOrThrow(GENERATE_MUTABLE_ANNOTATION))
                 .map(annotationUsage -> annotationUsage.getValueOrThrow("useFancyMethodNames"))
-                .map(AnnotationValueTypeChooser::asBoolean)
+                .map(AnnotationValue::asBoolean)
                 .orElse(false);
 
 
@@ -161,7 +164,7 @@ public class ConfigLoaderAnnotationProcessor extends ShadowProcessor {
     private static String getSetterName(RecordComponent component) {
         var fancy = component.getRecord().getDirectUsageOf(component.getApi().getAnnotationOrThrow(GENERATE_MUTABLE_ANNOTATION))
                 .map(annotationUsage -> annotationUsage.getValueOrThrow("useFancyMethodNames"))
-                .map(AnnotationValueTypeChooser::asBoolean)
+                .map(AnnotationValue::asBoolean)
                 .orElse(false);
 
 
