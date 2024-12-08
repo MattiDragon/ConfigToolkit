@@ -33,6 +33,10 @@ public class ConfigLoaderAnnotationProcessor extends ShadowProcessor {
 
     @Override
     public void process(ShadowApi api) {
+        // Disable output redirection as it breaks with gradle >=8.9 and is a stupid hack anyway
+        api.setSystemErrorHandler((api2, msg) -> {});
+        api.setSystemOutHandler((api2, msg) -> {});
+
         var annotated = api.getAnnotatedWith(GENERATE_MUTABLE_ANNOTATION);
         annotated.declaredTypes() // Everything should be declared
                 .stream()
