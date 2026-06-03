@@ -19,11 +19,9 @@ dependencies {
     include(implementation("io.determann:shadow-api-17:$shadow_version"))
 	include(implementation("net.fabricmc:javapoet:$javapoet_version"))
 
-	testAnnotationProcessor("io.determann:shadow-api-17:$shadow_version")
-	testAnnotationProcessor("net.fabricmc:javapoet:$javapoet_version")
-	testAnnotationProcessor(sourceSets.main.output)
+	annotationProcessor("io.determann:shadow-api-17:$shadow_version")
+	annotationProcessor("net.fabricmc:javapoet:$javapoet_version")
 }
-
 loom {
 	splitEnvironmentSourceSets()
 
